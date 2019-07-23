@@ -1,0 +1,76 @@
+name:                dep-lang
+version:             0.1.0.0
+github:              "githubuser/dep-lang"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2019 Author name here"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/dep-lang#readme>
+
+dependencies:
+  - name: base
+    version: ">= 4.7 && < 5"
+    #mixin: hiding (Prelude)
+  - unbound-generics >= 0.4
+  - mtl >= 2.2.2
+  - transformers >= 0.5.6.2
+  - name: protolude
+    version: ">= 0.2.3"
+    #mixin:
+      #- (Protolude as Prelude)
+  - containers >= 0.6.0.1
+  - lifted-base >= 0.2.3.12
+  - wl-pprint-text >= 1.2.0.0
+  - data-fix >= 0.2.0
+
+default-extensions:
+  - NoImplicitPrelude
+  - GeneralizedNewtypeDeriving
+  - DeriveDataTypeable
+  - DeriveGeneric
+  - FlexibleContexts
+  - NamedFieldPuns
+  - OverloadedStrings
+  - ViewPatterns
+
+ghc-options:
+  - -Wall
+  - -fno-warn-name-shadowing
+
+library:
+  source-dirs: src
+
+executables:
+  dep-lang-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - dep-lang
+
+tests:
+  dep-lang-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - dep-lang
+    - hspec

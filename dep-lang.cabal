@@ -1,0 +1,98 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 6d248e1013b12b50e7b96bd66b94207d9265e372601c7b2ff1a1d07bb98f8ef8
+
+name:           dep-lang
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/dep-lang#readme>
+homepage:       https://github.com/githubuser/dep-lang#readme
+bug-reports:    https://github.com/githubuser/dep-lang/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2019 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/dep-lang
+
+library
+  exposed-modules:
+      Core.Environment
+      Core.Evaluate
+      Core.LTT
+      Core.PrettyPrint
+      Lib
+  other-modules:
+      Paths_dep_lang
+  hs-source-dirs:
+      src
+  default-extensions: NoImplicitPrelude GeneralizedNewtypeDeriving DeriveDataTypeable DeriveGeneric FlexibleContexts NamedFieldPuns OverloadedStrings ViewPatterns
+  ghc-options: -Wall -fno-warn-name-shadowing
+  build-depends:
+      base >=4.7 && <5
+    , containers >=0.6.0.1
+    , data-fix >=0.2.0
+    , lifted-base >=0.2.3.12
+    , mtl >=2.2.2
+    , protolude >=0.2.3
+    , transformers >=0.5.6.2
+    , unbound-generics >=0.4
+    , wl-pprint-text >=1.2.0.0
+  default-language: Haskell2010
+
+executable dep-lang-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_dep_lang
+  hs-source-dirs:
+      app
+  default-extensions: NoImplicitPrelude GeneralizedNewtypeDeriving DeriveDataTypeable DeriveGeneric FlexibleContexts NamedFieldPuns OverloadedStrings ViewPatterns
+  ghc-options: -Wall -fno-warn-name-shadowing -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers >=0.6.0.1
+    , data-fix >=0.2.0
+    , dep-lang
+    , lifted-base >=0.2.3.12
+    , mtl >=2.2.2
+    , protolude >=0.2.3
+    , transformers >=0.5.6.2
+    , unbound-generics >=0.4
+    , wl-pprint-text >=1.2.0.0
+  default-language: Haskell2010
+
+test-suite dep-lang-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Core.EvaluateSpec
+      Core.SpecHelp
+      Core.TypeCheckSpec
+      Paths_dep_lang
+  hs-source-dirs:
+      test
+  default-extensions: NoImplicitPrelude GeneralizedNewtypeDeriving DeriveDataTypeable DeriveGeneric FlexibleContexts NamedFieldPuns OverloadedStrings ViewPatterns
+  ghc-options: -Wall -fno-warn-name-shadowing -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers >=0.6.0.1
+    , data-fix >=0.2.0
+    , dep-lang
+    , hspec
+    , lifted-base >=0.2.3.12
+    , mtl >=2.2.2
+    , protolude >=0.2.3
+    , transformers >=0.5.6.2
+    , unbound-generics >=0.4
+    , wl-pprint-text >=1.2.0.0
+  default-language: Haskell2010
