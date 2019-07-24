@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6d248e1013b12b50e7b96bd66b94207d9265e372601c7b2ff1a1d07bb98f8ef8
+-- hash: 4060b72bb4e0bfbfa8c9b61419113b9c6c945fbc42d30fd6b3d5d3d4a785ff42
 
 name:           dep-lang
 version:        0.1.0.0
@@ -41,7 +41,6 @@ library
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.0.1
-    , data-fix >=0.2.0
     , lifted-base >=0.2.3.12
     , mtl >=2.2.2
     , protolude >=0.2.3
@@ -61,7 +60,6 @@ executable dep-lang-exe
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.0.1
-    , data-fix >=0.2.0
     , dep-lang
     , lifted-base >=0.2.3.12
     , mtl >=2.2.2
@@ -86,7 +84,6 @@ test-suite dep-lang-test
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.0.1
-    , data-fix >=0.2.0
     , dep-lang
     , hspec
     , lifted-base >=0.2.3.12
