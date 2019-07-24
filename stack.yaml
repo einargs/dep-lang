@@ -18,11 +18,22 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: lts-13.18 #ghc-8.6.2
+resolver: lts-13.18 #uses ghc-8.6.4
 
 # Use nix
 nix:
+  # Use nix to build and supply dependencies.
   enable: true
+
+  # what nix packages should be exposed inside the `nix-shell` that `stack`
+  # creates for building stuff.
+  # packages: []
+
+  # The path option promises to allow me to override the nix-path instead
+  # of having to use my current hack. The problem is that every time I try
+  # to use it I get a seg fault. It may be looking for the files instead of
+  # the nix expression itself, which causes problems with the way I pin nixpkgs.
+  # path: [nixpkgs=/my/own/nixpkgs/clone]
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
