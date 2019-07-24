@@ -2,3 +2,4 @@
 scri-interpreter.cabal
 *~
 *.swp
+*.liquid
