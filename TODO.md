@@ -9,6 +9,7 @@
 
 # FUTURE
 - Totality checking
+- Use `liquidhaskell-cabal` to automate liquid type checking
 
 # NOTES
 - Let's work with explicit universe levels for now. There are lots of different
