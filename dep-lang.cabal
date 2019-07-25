@@ -1,10 +1,10 @@
-cabal-version: 1.12
+cabal-version: 1.24
 
 -- This file has been generated from package.yaml by hpack version 0.31.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4060b72bb4e0bfbfa8c9b61419113b9c6c945fbc42d30fd6b3d5d3d4a785ff42
+-- hash: 847989eba9755d28b8ac93ffbe720c35c5065f120e5682d486b49183c78545af
 
 name:           dep-lang
 version:        0.1.0.0
@@ -16,7 +16,7 @@ maintainer:     example@example.com
 copyright:      2019 Author name here
 license:        BSD3
 license-file:   LICENSE
-build-type:     Simple
+build-type:     Custom
 extra-source-files:
     README.md
     ChangeLog.md
@@ -24,6 +24,17 @@ extra-source-files:
 source-repository head
   type: git
   location: https://github.com/githubuser/dep-lang
+
+custom-setup
+  setup-depends:
+      Cabal
+    , base
+    , liquidhaskell-cabal >=0.2.1
+
+flag liquidhaskell
+  description: After building, verify with LiquidHaskell
+  manual: False
+  default: False
 
 library
   exposed-modules:

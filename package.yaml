@@ -33,7 +33,18 @@ dependencies:
   - containers >= 0.6.0.1
   - lifted-base >= 0.2.3.12
   - wl-pprint-text >= 1.2.0.0
-    #- liquidhaskell >= 0.8.6.0
+
+custom-setup:
+  dependencies:
+    - base
+    - Cabal
+    - liquidhaskell-cabal >= 0.2.1
+
+flags:
+  liquidhaskell:
+    description: After building, verify with LiquidHaskell
+    default: false
+    manual: false
 
 default-extensions:
   - NoImplicitPrelude

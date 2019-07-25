@@ -1,3 +1,13 @@
+{-# LANGUAGE 
+  NoImplicitPrelude,
+  GeneralizedNewtypeDeriving,
+  DeriveDataTypeable,
+  DeriveGeneric,
+  FlexibleContexts,
+  NamedFieldPuns,
+  OverloadedStrings,
+  ViewPatterns #-}
+
 module Core.Evaluate (
   equate, whnf
   ) where
@@ -28,7 +38,7 @@ equate term1 term2
 
       -- Lambdas are the same if the bodies are the same.
       (Pi tyA1 bnd1, Pi tyA2 bnd2) -> do
-        (v1, tyB1, v2, tyB2) <- U.unbind2Plus bnd1 bnd2
+        (_, tyB1, _, tyB2) <- U.unbind2Plus bnd1 bnd2
         equate tyA1 tyA2
         equate tyB1 tyB2
 
@@ -80,7 +90,7 @@ equate term1 term2
 --
 -- Throws an error if this is not the case.
 ensurePi :: (U.Fresh m, MonadReader Env m, MonadError Err m)
-         => LTT -> m (VarName, LTT, LTT)
+         => LTT -> m (Var, LTT, LTT)
 ensurePi ty = do
   nf <- whnf ty
   case nf of
@@ -89,7 +99,17 @@ ensurePi ty = do
       return (v, tyA, tyB)
     _ -> err [DS "expected function type", DD nf]
 
+{-@ measure isWhnf @-}
+isWhnf :: LTT -> Bool
+isWhnf (App (Bind BLam _) _) = False
+isWhnf (Var _) = True
+--isWhnf (App t1 _) = isWhnf t1
+isWhnf _ = True
+
+{-@ type Whnf = { v:LTT | isWhnf v } @-}
+
 -- | Put a term into weak-head normal form.
+{-@ whnf :: (U.Fresh m, MonadReader Env m) => LTT -> m Whnf @-}
 whnf :: (U.Fresh m, MonadReader Env m) => LTT -> m LTT
 whnf (Var x) = do
   env <- ask

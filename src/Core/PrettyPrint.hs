@@ -27,7 +27,7 @@ instance Disp [DispInfo] where
 arrow :: Doc
 arrow = text "->"
 
-instance Disp VarName where
+instance Disp Var where
   disp name = str <> num
     where str = text $ toS $ U.name2String name
           intComp = U.name2Integer name
@@ -40,7 +40,7 @@ instance Disp LTT where
   disp (Bind abs bnd) = U.runFreshM $ do
     (var, body) <- U.unbind bnd
     case abs of
-      BPi ty ->
+      BPi (U.Embed ty) ->
         return $ parens (disp var <> colon <+> disp ty)
                   <+> arrow <+> disp body
       BLam ->

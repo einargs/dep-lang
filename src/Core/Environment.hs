@@ -11,7 +11,7 @@ import Data.Map as Map
 
 import qualified Unbound.Generics.LocallyNameless as U
 
-data Env = Env { context :: Map VarName Decl }
+data Env = Env { context :: Map Var Decl }
 
 emptyEnv :: Env
 emptyEnv = Env Map.empty
@@ -39,7 +39,7 @@ runTcMonad env = runExcept
                . U.runFreshMT
                . unTcMonad
 
-lookupDef :: Env -> VarName -> Maybe LTT
+lookupDef :: Env -> Var -> Maybe LTT
 lookupDef env v = lookup v (context env) >>= extractExp
     where
       extractExp :: Decl -> Maybe LTT
