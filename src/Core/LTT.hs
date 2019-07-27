@@ -54,43 +54,40 @@ data LTT
   | App LTT LTT
   deriving (Show, Generic, Typeable, U.Alpha)
 
+type LttBinding' = U.Bind Var' LTT'
 type Var' = U.Name LTT'
 {-@ autosize LTT' @-}
 {-@ data LTT'
   = Var' { var' :: Var' }
   | Universe' { universeLevel' :: Nat }
-  | Pi' { piTy' :: LTT', piVar' :: Var', piBody' :: LTT' }
-  | Lam' { lamVar' :: Var', lamBody' :: LTT' }
-  | Hole' { holeVar' :: Var', holeBody' :: LTT' }
-  | Guess' { guessTy' :: LTT', guessVar' :: Var', guessBody' :: LTT' }
+  | Pi' { piTy' :: LTT', piBinding' :: LttBinding' }
+  | Lam' { lamBinding' :: LttBinding' }
+  | Hole' { holeBinding' :: LttBinding' }
+  | Guess' { guessTy' :: LTT', guessBinding :: LttBinding' }
   | App' { appR' :: LTT', appL' :: LTT' } @-}
 data LTT'
   = Var' Var
   | Universe' Int
-  | Pi' LTT' Var' LTT'
-  | Lam' Var' LTT'
-  | Hole' Var' LTT'
-  | Guess' LTT' Var' LTT'
+  | Pi' LTT' LttBinding'
+  | Lam' LttBinding'
+  | Hole' LttBinding'
+  | Guess' LTT' LttBinding'
   | App' LTT' LTT'
   deriving (Show, Generic, Typeable, U.Alpha)
 
-{- @ measure lttLen @-}
-{- @ lttLen :: LTT' -> Nat  @-}
-  {- lttLen :: LTT' -> Int
-lttLen (Var' _) = 0
-lttLen (Universe' _) = 0
-lttLen (Bind' binder _ body) = 1 + max' (binderLen binder) (lttLen body)
-lttLen (App' t1 t2) = 1 + max' (lttLen t1) (lttLen t2) -}
+{-@ measure isBindingDev' @-}
+isBindingDev' :: LttBinding' -> Bool
+isBindingDev' (B _ t) = isLttDev' t
 
 {-@ measure isLttDev' @-}
 isLttDev' :: LTT' -> Bool
 isLttDev' (Var' _) = False
 isLttDev' (Universe' _) = False
 isLttDev' (App' _ _) = False
-isLttDev' (Pi' tyA _ tyB) = isLttDev' tyA || isLttDev' tyB
-isLttDev' (Lam' _ body) = isLttDev' body
-isLttDev' (Hole' _ body) = isLttDev' body 
-isLttDev' (Guess' tyA _ tyB) = isLttDev' tyA || isLttDev' tyB
+isLttDev' (Pi' tyA binding) = isLttDev' tyA || isBindingDev' binding
+isLttDev' (Lam' binding) = False -- isLttDev' body
+isLttDev' (Hole' binding) = True
+isLttDev' (Guess' tyA binding) = True
 
 {-@ type LttDev = { v:LTT | isLttDev v } @-}
 {-@ type LttCore = { v:LTT | not (isLttDev v) } @-}
