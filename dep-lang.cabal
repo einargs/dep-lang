@@ -4,7 +4,7 @@ cabal-version: 1.24
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 847989eba9755d28b8ac93ffbe720c35c5065f120e5682d486b49183c78545af
+-- hash: 9c8ad2fbca52e88eca5837221b488472fcd52ebc3c550fe3a17588c1b545e8af
 
 name:           dep-lang
 version:        0.1.0.0
@@ -41,8 +41,13 @@ library
       Core.Environment
       Core.Evaluate
       Core.LTT
+      Core.NewLTT
       Core.PrettyPrint
+      Core.Test
       Lib
+      Repro
+      Repro2
+      Repro3
   other-modules:
       Paths_dep_lang
   hs-source-dirs:
@@ -52,6 +57,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.0.1
+    , lens >=4.17.1
     , lifted-base >=0.2.3.12
     , mtl >=2.2.2
     , protolude >=0.2.3
@@ -72,6 +78,7 @@ executable dep-lang-exe
       base >=4.7 && <5
     , containers >=0.6.0.1
     , dep-lang
+    , lens >=4.17.1
     , lifted-base >=0.2.3.12
     , mtl >=2.2.2
     , protolude >=0.2.3
@@ -97,6 +104,7 @@ test-suite dep-lang-test
     , containers >=0.6.0.1
     , dep-lang
     , hspec
+    , lens >=4.17.1
     , lifted-base >=0.2.3.12
     , mtl >=2.2.2
     , protolude >=0.2.3

@@ -55,6 +55,7 @@ packages:
 # (e.g., acme-missiles-0.3)
 extra-deps:
 - liquidhaskell-cabal-0.2.1.0
+- ../unbound-generics/
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

@@ -21,6 +21,7 @@ import Unbound.Generics.LocallyNameless (Embed(..))
 import qualified Unbound.Generics.LocallyNameless.Unsafe as U
 import Unbound.Generics.LocallyNameless.Bind
 
+
 -- | Variable name representing an LTT term.
 type Var = U.Name LTT
 
