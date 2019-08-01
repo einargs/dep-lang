@@ -60,6 +60,7 @@ default-extensions:
 ghc-options:
   - -Wall
   - -fno-warn-name-shadowing
+  - -fno-warn-unused-top-binds
 
 library:
   source-dirs: src
@@ -74,7 +75,6 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - dep-lang
-      #- liquidhaskell >= 0.8.6.0
 
 tests:
   dep-lang-test:

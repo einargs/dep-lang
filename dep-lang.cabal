@@ -4,7 +4,7 @@ cabal-version: 1.24
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9c8ad2fbca52e88eca5837221b488472fcd52ebc3c550fe3a17588c1b545e8af
+-- hash: 634cba74830b5a3d03d4dfe525809e780bdfdc52b12256ceb085b40858d5be32
 
 name:           dep-lang
 version:        0.1.0.0
@@ -41,19 +41,14 @@ library
       Core.Environment
       Core.Evaluate
       Core.LTT
-      Core.NewLTT
       Core.PrettyPrint
-      Core.Test
       Lib
-      Repro
-      Repro2
-      Repro3
   other-modules:
       Paths_dep_lang
   hs-source-dirs:
       src
   default-extensions: NoImplicitPrelude GeneralizedNewtypeDeriving DeriveDataTypeable DeriveGeneric FlexibleContexts NamedFieldPuns OverloadedStrings ViewPatterns
-  ghc-options: -Wall -fno-warn-name-shadowing
+  ghc-options: -Wall -fno-warn-name-shadowing -fno-warn-unused-top-binds
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.0.1
@@ -73,7 +68,7 @@ executable dep-lang-exe
   hs-source-dirs:
       app
   default-extensions: NoImplicitPrelude GeneralizedNewtypeDeriving DeriveDataTypeable DeriveGeneric FlexibleContexts NamedFieldPuns OverloadedStrings ViewPatterns
-  ghc-options: -Wall -fno-warn-name-shadowing -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -fno-warn-name-shadowing -fno-warn-unused-top-binds -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.0.1
@@ -98,7 +93,7 @@ test-suite dep-lang-test
   hs-source-dirs:
       test
   default-extensions: NoImplicitPrelude GeneralizedNewtypeDeriving DeriveDataTypeable DeriveGeneric FlexibleContexts NamedFieldPuns OverloadedStrings ViewPatterns
-  ghc-options: -Wall -fno-warn-name-shadowing -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -fno-warn-name-shadowing -fno-warn-unused-top-binds -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , containers >=0.6.0.1

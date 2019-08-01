@@ -1,44 +1,35 @@
-{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, KindSignatures,
-  PatternSynonyms, DeriveAnyClass, DataKinds, TypeFamilies,
-  FunctionalDependencies, StandaloneDeriving, TypeFamilyDependencies,
-  QuasiQuotes #-}
-{-@ LIQUID "--short-names" @-}
+{-# LANGUAGE PatternSynonyms, MultiParamTypeClasses #-}
 {-@ LIQUID "--exact-data-cons" @-}
+
 module Core.LTT (
-  Var, Decl(..), Binder(..),
-  LTT(.., Pi, Lam), viewPi, viewLam
+  Binder(..), LTT(.., LPi, LLam, LHole, LGuess), Var, Decl(..),
+  viewLam, viewPi
   ) where
 
 import Protolude
 
--- Standard imports
-import GHC.Generics (Generic)
-import Data.Typeable (Typeable)
-
 -- Library imports
 import qualified Unbound.Generics.LocallyNameless as U
-import Unbound.Generics.LocallyNameless (Embed(..))
-import qualified Unbound.Generics.LocallyNameless.Unsafe as U
-import Unbound.Generics.LocallyNameless.Bind
-
+--import Unbound.Generics.LocallyNameless (Bind(..))
+import Unbound.Generics.LocallyNameless.Bind (Bind(B))
+import GHC.Generics (Generic)
+import Data.Typeable (Typeable)
 
 -- | Variable name representing an LTT term.
 type Var = U.Name LTT
 
 {-@ autosize Binder @-}
 {-@ data Binder 
-  = BPi { piTy :: (Embed LTT) }
-  | BLam
+  = Pi { piTy :: (U.Embed LTT) }
+  | Lam
   | Hole
-  | Guess { guessTy :: (Embed LTT) } @-}
+  | Guess { guessTy :: (U.Embed LTT) } @-}
 data Binder
-  = BPi (Embed LTT)
-  | BLam
+  = Pi (U.Embed LTT)
+  | Lam
   | Hole
-  | Guess (Embed LTT)
-  deriving (Show, Generic, Typeable, U.Alpha)
-
-type LttBinding = U.Bind Var LTT
+  | Guess (U.Embed LTT)
+  deriving (Show, Generic, Typeable)
 
 -- | The core dependent calculus. Based on Idris' TT.
 
@@ -46,58 +37,49 @@ type LttBinding = U.Bind Var LTT
 {-@ data LTT
   = Var { var :: Var }
   | Universe { universeLevel :: Nat }
-  | Bind { binder :: Binder, binding :: U.Bind Var LTT }
+  | Bind { binder :: Binder, binding :: Bind Var LTT }
   | App { appR :: LTT, appL :: LTT } @-}
 data LTT
   = Var Var
   | Universe Int
-  | Bind Binder LttBinding
+  | Bind Binder (Bind Var LTT)
   | App LTT LTT
-  deriving (Show, Generic, Typeable, U.Alpha)
+  deriving (Show, Generic, Typeable)
 
-type LttBinding' = U.Bind Var' LTT'
-type Var' = U.Name LTT'
-{-@ autosize LTT' @-}
-{-@ data LTT'
-  = Var' { var' :: Var' }
-  | Universe' { universeLevel' :: Nat }
-  | Pi' { piTy' :: LTT', piBinding' :: LttBinding' }
-  | Lam' { lamBinding' :: LttBinding' }
-  | Hole' { holeBinding' :: LttBinding' }
-  | Guess' { guessTy' :: LTT', guessBinding :: LttBinding' }
-  | App' { appR' :: LTT', appL' :: LTT' } @-}
-data LTT'
-  = Var' Var
-  | Universe' Int
-  | Pi' LTT' LttBinding'
-  | Lam' LttBinding'
-  | Hole' LttBinding'
-  | Guess' LTT' LttBinding'
-  | App' LTT' LTT'
-  deriving (Show, Generic, Typeable, U.Alpha)
+{-@ measure isLttDev @-}
+isLttDev :: LTT -> Bool
+isLttDev (Var _) = False
+isLttDev (Universe _) = False
+isLttDev (Bind (Pi (U.Embed t1)) (B _ t2)) = isLttDev t2 || isLttDev t1
+isLttDev (Bind Lam (B _ t)) = isLttDev t
+isLttDev (Bind Hole _) = True
+isLttDev (Bind (Guess _) _) = True
+isLttDev (App l r) = isLttDev l || isLttDev r
 
-{-@ measure isBindingDev' @-}
-isBindingDev' :: LttBinding' -> Bool
-isBindingDev' (B _ t) = isLttDev' t
+{-@ measure isBinderDev @-}
+isBinderDev :: Binder -> Bool
+isBinderDev (Pi (U.Embed t)) = isLttDev t
+isBinderDev Lam = False
+isBinderDev Hole = True
+isBinderDev (Guess _) = True
 
-{-@ measure isLttDev' @-}
-isLttDev' :: LTT' -> Bool
-isLttDev' (Var' _) = False
-isLttDev' (Universe' _) = False
-isLttDev' (App' _ _) = False
-isLttDev' (Pi' tyA binding) = isLttDev' tyA || isBindingDev' binding
-isLttDev' (Lam' binding) = False -- isLttDev' body
-isLttDev' (Hole' binding) = True
-isLttDev' (Guess' tyA binding) = True
+{-@ type CoreLTT = {v: LTT | not (isLttDev v) } @-}
+{-@ type DevLTT = {v: LTT | isLttDev v } @-}
 
-{-@ type LttDev = { v:LTT | isLttDev v } @-}
-{-@ type LttCore = { v:LTT | not (isLttDev v) } @-}
+pattern LPi :: LTT -> U.Bind Var LTT -> LTT
+pattern LPi tyA binding = Bind (Pi (U.Embed tyA)) binding
 
-pattern Pi :: LTT -> U.Bind Var LTT -> LTT
-pattern Pi tyA binding = Bind (BPi (Embed tyA)) binding
+pattern LLam :: U.Bind Var LTT -> LTT
+pattern LLam binding = Bind Lam binding
 
-pattern Lam :: U.Bind Var LTT -> LTT
-pattern Lam binding = Bind BLam binding
+pattern LHole :: U.Bind Var LTT -> LTT
+pattern LHole binding = Bind Hole binding
+
+pattern LGuess :: LTT -> U.Bind Var LTT -> LTT
+pattern LGuess tyA binding = Bind (Guess (U.Embed tyA)) binding
+
+instance U.Alpha LTT
+instance U.Alpha Binder
 
 instance U.Subst LTT Binder
 
@@ -106,13 +88,13 @@ instance U.Subst LTT LTT where
   isvar _       = Nothing
 
 viewPi :: (U.Fresh m) => LTT -> m (Maybe (Var, LTT, LTT))
-viewPi (Pi tyA bnd) = do
+viewPi (LPi tyA bnd) = do
   (v, tyB) <- U.unbind bnd
   return $ Just (v, tyA, tyB)
 viewPi _ = return Nothing
 
 viewLam :: (U.Fresh m) => LTT -> m (Maybe (Var, LTT))
-viewLam (Lam bnd) = do
+viewLam (LLam bnd) = do
   (var, body) <- U.unbind bnd
   return $ Just (var, body)
 viewLam _ = return Nothing

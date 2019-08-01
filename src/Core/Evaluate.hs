@@ -37,7 +37,7 @@ equate term1 term2
       (Var x, Var y) | x == y -> return ()
 
       -- Lambdas are the same if the bodies are the same.
-      (Pi tyA1 bnd1, Pi tyA2 bnd2) -> do
+      (LPi tyA1 bnd1, LPi tyA2 bnd2) -> do
         (_, tyB1, _, tyB2) <- U.unbind2Plus bnd1 bnd2
         equate tyA1 tyA2
         equate tyB1 tyB2
@@ -46,7 +46,7 @@ equate term1 term2
       -- bodies are the same.
       -- 
       -- >>> (x:A) -> B = (y:A) -> B
-      (Lam bnd1, Lam bnd2) -> do
+      (LLam bnd1, LLam bnd2) -> do
         (_, t1, _, t2) <- U.unbind2Plus bnd1 bnd2
         equate t1 t2
 
@@ -94,16 +94,16 @@ ensurePi :: (U.Fresh m, MonadReader Env m, MonadError Err m)
 ensurePi ty = do
   nf <- whnf ty
   case nf of
-    Pi tyA bnd -> do
+    LPi tyA bnd -> do
       (v, tyB) <- U.unbind bnd
       return (v, tyA, tyB)
     _ -> err [DS "expected function type", DD nf]
 
 {-@ measure isWhnf @-}
 isWhnf :: LTT -> Bool
-isWhnf (App (Bind BLam _) _) = False
+isWhnf (App (Bind Lam _) _) = False
 isWhnf (Var _) = True
---isWhnf (App t1 _) = isWhnf t1
+isWhnf (App t1 _) = isWhnf t1
 isWhnf _ = True
 
 {-@ type Whnf = { v:LTT | isWhnf v } @-}
@@ -114,15 +114,16 @@ whnf :: (U.Fresh m, MonadReader Env m) => LTT -> m LTT
 whnf (Var x) = do
   env <- ask
   case lookupDef env x of
-    (Just d) -> whnf d
-    _        -> return $ Var x
+    Just d -> whnf d
+    _      -> return $ Var x
 
-whnf (App t1 t2) = do
+whnf app@(App t1 t2) = do
   nf <- whnf t1
-  maybeLam <- viewLam nf
-  case maybeLam of
-    Just (v, body) -> whnf $ U.subst v t2 body
-    _ -> return $ App nf t2
+  case nf of
+    LLam binding -> do
+      (v, body) <- U.unbind binding
+      whnf $ U.subst v t2 body
+    _ -> return $ app
 
 -- All other forms are already in whnf
 whnf term = return term

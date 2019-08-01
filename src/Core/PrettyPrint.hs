@@ -10,6 +10,7 @@ import Core.LTT
 
 import Text.PrettyPrint.Leijen.Text hiding ((<$>))
 import Unbound.Generics.LocallyNameless as U
+import Unbound.Generics.LocallyNameless.Unsafe (unsafeUnbind)
 
 class Disp a where
   disp :: a -> Doc
@@ -36,13 +37,14 @@ instance Disp Var where
 instance Disp LTT where
   disp (Var v) = disp v
   disp (Universe level) = text "Type" <> int level
-  disp (Pi ty bnd) = panic "hey"
-  disp (Bind abs bnd) = U.runFreshM $ do
-    (var, body) <- U.unbind bnd
-    case abs of
-      BPi (U.Embed ty) ->
-        return $ parens (disp var <> colon <+> disp ty)
-                  <+> arrow <+> disp body
-      BLam ->
-        return $ backslash <> disp var <> dot <+> disp body
   disp (App t1 t2) = parens (disp t1) <+> parens (disp t2)
+  disp (Bind binder binding) = 
+    let (var, body) = unsafeUnbind binding
+     in case binder of
+          Pi (U.Embed ty) ->
+            parens (disp var <> colon <+> disp ty)
+              <+> arrow <+> disp body
+          Lam ->
+            backslash <> disp var <> dot <+> disp body
+          _ ->
+            panic "I don't think these should be here"

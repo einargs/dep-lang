@@ -55,7 +55,10 @@ packages:
 # (e.g., acme-missiles-0.3)
 extra-deps:
 - liquidhaskell-cabal-0.2.1.0
-- ../unbound-generics/
+- git: https://github.com/einargs/unbound-generics.git
+  commit: 8581f64b3736c78a7f25a0b54f2c4e7f2b72e222
+- git: https://github.com/ucsd-progsys/liquidhaskell.git
+  commit: f4fe82cd03fbe906379c8ebeac5ec3efae0b4cd8
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
