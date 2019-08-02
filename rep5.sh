@@ -17,5 +17,5 @@ cat ./src/Repro2.hs
 echo "stack exec liquid -- src/Repro2.hs"
 stack exec liquid -- src/Repro2.hs
 
-echo "stack exec liquid -- src/Repro2.hs --diff"
-stack exec liquid -- src/Repro2.hs --diff
+echo "stack exec liquid -- src/Repro2.hs --full"
+stack exec liquid -- src/Repro2.hs --full
